@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic HTML Loader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #0077cc;
+        }
+
+        label {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            padding: 10px;
+            font-size: 1em;
+            width: 90%;
+            max-width: 300px;
+            height: 150px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #0077cc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .about {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #555;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .donate {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #333;
+            text-align: center;
+        }
+
+        .donate img {
+            margin-top: 10px;
+            width: 150px;
+            height: auto;
+        }
+
+        .language-switch {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            label, textarea, button, .about, .donate {
+                font-size: 0.9em;
+            }
+
+            .donate img {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switch">
+        <button id="languageButton">UKR</button>
+    </div>
+    <h1 id="title">Dynamic HTML Loader</h1>
+    <label for="htmlInput" id="label">Enter HTML Code or Dropbox Link:</label>
+    <textarea id="htmlInput" placeholder="Paste your HTML code or Dropbox link here"></textarea>
+    <button id="loadButton">Load Web Page</button>
+    <p id="status"></p>
+
+    <div class="about" id="about">
+        <p>This tool allows you to dynamically load HTML content from a directly input HTML code or Dropbox URL to replace the current page content. Simply paste HTML code or Dropbox link into the input field, and the page will render the content.</p>
+    </div>
+
+    <div class="donate" id="donate">
+        <p>If you enjoy using this tool and would like to support its development, consider buying me a coffee! Donations are appreciated via Bitcoin:</p>
+        <p><strong>Bitcoin Address:</strong> 1ALwxbHo8zNztEmCTw5qRBWgpJV3L49HsE</p>
+        <img src="https://i.ibb.co/ScQqmGh/Screenshot-20250117-184538-Binance.jpg" alt="Bitcoin QR Code">
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Dynamic HTML Loader",
+                label: "Enter HTML Code or Dropbox Link:",
+                about: "This tool allows you to dynamically load HTML content from a directly input HTML code or Dropbox URL to replace the current page content. Simply paste HTML code or Dropbox link into the input field, and the page will render the content.",
+                donate: "If you enjoy using this tool and would like to support its development, consider buying me a coffee! Donations are appreciated via Bitcoin:",
+                placeholder: "Paste your HTML code or Dropbox link here",
+                loadButton: "Load Web Page",
+                address: "Address"
+            },
+            uk: {
+                title: "Динамічний Завантажувач HTML",
+                label: "Введіть HTML-код або посилання на Dropbox:",
+                about: "Цей інструмент дозволяє динамічно завантажувати HTML-контент з введеного HTML-коду або URL Dropbox, замінюючи поточний вміст сторінки. Просто вставте HTML-код або посилання на Dropbox у поле вводу, і сторінка відобразить контент.",
+                donate: "Якщо вам подобається цей інструмент і ви хочете підтримати його розвиток, розгляньте можливість купити мені каву! Пожертви приймаються через Bitcoin:",
+                placeholder: "Вставте HTML-код або посилання на Dropbox",
+                loadButton: "Завантажити вебсторінку",
+                address: "Адреса"
+            }
+        };
+
+        let currentLanguage = "en";
+
+        document.getElementById('languageButton').addEventListener('click', () => {
+            currentLanguage = currentLanguage === "en" ? "uk" : "en";
+            updateLanguage();
+        });
+
+        function updateLanguage() {
+            const elements = {
+                title: document.getElementById('title'),
+                label: document.getElementById('label'),
+                about: document.getElementById('about'),
+                donate: document.getElementById('donate'),
+                htmlInput: document.getElementById('htmlInput'),
+                loadButton: document.getElementById('loadButton')
+            };
+
+            const translation = translations[currentLanguage];
+
+            elements.title.textContent = translation.title;
+            elements.label.textContent = translation.label;
+            elements.about.querySelector('p').textContent = translation.about;
+            elements.donate.querySelector('p').textContent = translation.donate;
+            elements.htmlInput.placeholder = translation.placeholder;
+            elements.loadButton.textContent = translation.loadButton;
+
+            document.getElementById('languageButton').textContent = currentLanguage === "en" ? "ENG" : "UKR";
+        }
+
+        document.getElementById('loadButton').addEventListener('click', async () => {
+            const input = document.getElementById('htmlInput');
+            const content = input.value.trim();
+            const status = document.getElementById('status');
+
+            if (!content) {
+                status.textContent = currentLanguage === "en" ? "Please enter a valid Dropbox link or HTML code." : "Будь ласка, введіть коректне посилання на Dropbox або HTML-код.";
+                return;
+            }
+
+            try {
+                const url = new URL(content);
+                let modifiedUrl = url.href;
+                if (url.host.includes('dropbox.com')) {
+                    modifiedUrl = modifiedUrl.replace("www.dropbox.com", "dl.dropboxusercontent.com");
+                } else {
+                    throw new Error(currentLanguage === "en" ? "The link must be a valid Dropbox link." : "Посилання має бути коректним посиланням на Dropbox.");
+                }
+
+                status.textContent = currentLanguage === "en" ? "Loading content from URL..." : "Завантаження контенту з URL...";
+
+                try {
+                    const response = await fetch(modifiedUrl);
+
+                    if (!response.ok) {
+                        throw new Error((currentLanguage === "en" ? "Failed to load content. Status: " : "Не вдалося завантажити контент. Статус: ") + response.status);
+                    }
+
+                    const htmlContent = await response.text();
+                    document.open();
+                    document.write(htmlContent);
+                    document.close();
+                } catch (error) {
+                    status.textContent = `${currentLanguage === "en" ? "Error:" : "Помилка:"} ${error.message}`;
+                }
+
+            } catch (_) {
+                status.textContent = currentLanguage === "en" ? "Rendering HTML content..." : "Відображення HTML-контенту...";
+                document.open();
+                document.write(content);
+                document.close();
+            }
+        });
+
+        updateLanguage();
+    </script>
+</body>
+</html>
